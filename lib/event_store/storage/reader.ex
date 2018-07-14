@@ -61,31 +61,12 @@ defmodule EventStore.Storage.Reader do
         causation_id: causation_id |> from_uuid(),
         data: data,
         metadata: metadata,
-        created_at: created_at |> to_naive()
+        created_at: created_at
       }
     end
 
     defp from_uuid(nil), do: nil
     defp from_uuid(uuid), do: UUID.binary_to_string!(uuid)
-
-    defp to_naive(%NaiveDateTime{} = naive), do: naive
-
-    defp to_naive(%Postgrex.Timestamp{} = timestamp) do
-      %Postgrex.Timestamp{
-        year: year,
-        month: month,
-        day: day,
-        hour: hour,
-        min: minute,
-        sec: second,
-        usec: microsecond
-      } = timestamp
-
-      with {:ok, naive} <-
-             NaiveDateTime.new(year, month, day, hour, minute, second, {microsecond, 6}) do
-        naive
-      end
-    end
   end
 
   defmodule Query do
